@@ -13,6 +13,7 @@ const (
 	MaterialGetTemporaryURL    = "https://api.weixin.qq.com/cgi-bin/media/get?access_token=%s&media_id=%s"
 	MaterialAddNewsURL         = "https://api.weixin.qq.com/cgi-bin/material/add_news?access_token=%s"
 	MaterialUploadImg          = "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=%s"
+	MediaUploadNewsURL         = "https://api.weixin.qq.com/cgi-bin/media/uploadnews?access_token=%s"
 	MaterialUploadNewsURL      = "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=%s&type=%s"
 	MaterialGetNewsURL         = "https://api.weixin.qq.com/cgi-bin/material/get_material?access_token=%s"
 	MaterialDeleteNewsURL      = "https://api.weixin.qq.com/cgi-bin/material/del_material?access_token=%s"
@@ -93,6 +94,21 @@ func UploadImg(file *os.File) (u string, err error) {
 	}{}
 	err = Upload(url, "media", file, wapper)
 	return wapper.URL, err
+}
+
+func UploadNewsMedial(mtype MediaType, news_items []Article) (mediaId string, err error) {
+	url := fmt.Sprintf(MediaUploadNewsURL, AccessToken())
+	wapper := &struct {
+		WXError
+		MediaId string `json:"media_id"`
+	}{}
+
+	articles := &struct {
+		Articles []Article `json:"articles"`
+	}{news_items}
+
+	err = Post(url, articles, wapper)
+	return wapper.MediaId, err
 }
 
 // UploadNews 新增其他类型永久素材
